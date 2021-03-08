@@ -2,26 +2,21 @@ import React, { useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { io } from "socket.io-client";
-import ENDPOINT from '../objects/state';
 
 const CreateGame = () => {
 
   const {register, handleSubmit} = useForm(); 
   const history = useHistory();
 
+  const ENDPOINT = "http://localhost:8080";
+  const socket = io(ENDPOINT);
+
+
   const onSubmit = (data: any) => {
     alert(JSON.stringify(data));
-    // history.push('/playgame');
+    socket.emit("creategame", data);
+    history.push('/waitplayers');
   }
-
-  const ENDPOINT = "http://localhost:8080";
-
-  useEffect(() => {
-    const socket = io(ENDPOINT);
-    socket.on("connection", (data: string) => {
-      console.log(data);
-    });
-  });
 
   return (
     <div>
@@ -35,6 +30,10 @@ const CreateGame = () => {
 
         <div>
           <input type="number" name="roundtime" ref={register} placeholder="Round time"/>
+        </div>
+
+        <div>
+          <input type="text" name="playerName" ref={register} placeholder="Player Name"/>
         </div>
 
         <input type="submit" value="Create Game"/>
