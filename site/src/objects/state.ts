@@ -4,4 +4,5 @@ enum State {
     VOTING,
     END,
 }
+
  export default State;
