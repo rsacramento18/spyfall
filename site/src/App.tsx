@@ -1,20 +1,20 @@
 import React, { useState, useEffect }  from 'react';
 import { useForm } from "react-hook-form";
 import { io } from "socket.io-client";
-import { ENDPOINT, State, Player }  from "./objects/constants";
+import { ENDPOINT, State, initState, Player }  from "./objects/constants";
 
 function App() {
 
   const {register, handleSubmit} = useForm(); 
 
-  const [state, setState] = useState<State>({stage: 'init'});
+  const [state, setState] = useState<State>(initState);
   const [gameCode, setGameCode] = useState<string>();
   const [player, setPlayer] = useState<Player>();
 
 
   const socket = io(ENDPOINT);
 
-  const createGame = () => setState({...state, stage: 'create'});
+  const createGame = () => setState({...state, stage: "create"});
 
 
   const joinGame = (data: any) => alert(JSON.stringify(data));
@@ -27,7 +27,7 @@ function App() {
     socket.on("gamecode", (gameCode: string) => {
       setGameCode(gameCode);
     });
-    socket.on("creategame", (state: State) => {
+    socket.on("setstate", (state: State) => {
       setState(state);
     });
     socket.on("init", (player: Player) => {
@@ -35,7 +35,7 @@ function App() {
     });
   });
 
-  if(state.stage === 'init') {
+  if(state.stage === "init") {
     return (
       <div className="app">
         <h1>Spyfall</h1>
@@ -54,6 +54,7 @@ function App() {
     );
   }
   else if(state.stage === 'create') {
+
     return (
       <div>
         <h1>Create Game Page!</h1>
@@ -71,20 +72,23 @@ function App() {
         </form>
       </div>
     );
+
   }
   else if(state.stage === 'waiting'){
+
     return (
       <div>
         <h1>Waiting for players</h1>
-        {players.map( (player: string, index: number) => {
+        {state.players.map( (player: Player, index: number) => {
           return(
-            <div>
-              <h1>{player}-{index}</h1>
+            <div key={index}>
+              <h1>{player.playerName}-{player.id}</h1>
             </div>
           )
         })}
       </div>
     );
+
   }
   else {
     return (

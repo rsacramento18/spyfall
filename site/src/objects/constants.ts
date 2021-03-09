@@ -4,18 +4,30 @@
      stage: string;
      roundTime: number;
      playerHost: number;
-     players: number[];
+     players: Player[];
      spy: number;
      playerCount: number;
      playerTurn: number;
      lasPlayer: number;
      removedPlayers: number[];
  }
+
+ export const initState : State = {
+     stage: "init",
+     roundTime: 0,
+     playerHost: 0,
+     players: [],
+     spy: 0,
+     playerCount: 0,
+     playerTurn: 0,
+     lasPlayer: 0,
+     removedPlayers: []
+ }
  
 
  export interface Player {
-     player: number, 
-     playerName: string
+     id: number;
+     playerName: string;
  };
 
 

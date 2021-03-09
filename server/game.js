@@ -1,10 +1,18 @@
 const createGameState = (gameData) => {
     return {
-        stage: "CREATE",
-        roundTime: gameDate.roundTime,
-        playerHost: gameData.playerhost,
-        players: [gameDate.playerhost],
-        playerCount: gameDate.playercount,
+        stage: "waiting",
+        roundTime: gameData.roundtime,
+        playerHost: {
+            id: 1,
+            playerName: gameData.playerhost,
+        },
+        players: [
+            {
+                id: 1,
+                playerName: gameData.playerhost,
+            }
+        ],
+        playerCount: gameData.playercount,
         spy: '',
         playerTurn: '',
         lastPlayer: '',

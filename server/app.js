@@ -7,6 +7,7 @@ const io = require('socket.io')(http, {
   }
 });
 const { createGameState } = require('./game');
+const { makeid } = require('./utils');
 
 const state = {};
 const clientRooms = {};
@@ -20,13 +21,14 @@ io.on('connection', client => {
     function handleCreateGame(gameData) {
         let roomName = makeid(5);
         clientRooms[client.id] = roomName;
-        client.emit('gameCode', roomName);
+        client.emit('gamecode', roomName);
 
         state[roomName] = createGameState(gameData);
 
         client.join(roomName);
         client.number = 1;
         client.emit('init', 1);
+        client.emit('setstate', state[roomName]);
 
         console.log(gameData);
     }
