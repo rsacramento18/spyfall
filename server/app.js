@@ -6,16 +6,28 @@ const io = require('socket.io')(http, {
       methods: ["GET", "POST"]
   }
 });
+const { createGameState } = require('./game');
+
+const state = {};
+const clientRooms = {};
 
 const PORT = 8080 || process.env.PORT;
 
+
 io.on('connection', client => {
-    client.emit('init', {data: 'hello world'});
+    client.on('creategame', handleCreateGame);
 
-    client.on('creategame', handleGameStart);
+    function handleCreateGame(gameData) {
+        let roomName = makeid(5);
+        clientRooms[client.id] = roomName;
+        client.emit('gameCode', roomName);
 
-    function handleGameStart(gameData) {
-        console.log("game started");
+        state[roomName] = createGameState(gameData);
+
+        client.join(roomName);
+        client.number = 1;
+        client.emit('init', 1);
+
         console.log(gameData);
     }
 });
