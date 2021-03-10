@@ -11,11 +11,9 @@ function App() {
   const [gameCode, setGameCode] = useState<string>();
   const [player, setPlayer] = useState<Player>();
 
-
   const socket = io(ENDPOINT);
 
   const createGame = () => setState({...state, stage: "create"});
-
 
   const joinGame = (data: any) => {
     socket.emit("joinGame", data);
