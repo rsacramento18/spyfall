@@ -17,17 +17,19 @@ function App() {
   const createGame = () => setState({...state, stage: "create"});
 
 
-  const joinGame = (data: any) => alert(JSON.stringify(data));
+  const joinGame = (data: any) => {
+    socket.emit("joinGame", data);
+  }
 
   const onSubmit = (data: any) => {
-    socket.emit("creategame", data);
+    socket.emit("createGame", data);
   }
 
   useEffect(() => {
-    socket.on("gamecode", (gameCode: string) => {
+    socket.on("gameCode", (gameCode: string) => {
       setGameCode(gameCode);
     });
-    socket.on("setstate", (state: State) => {
+    socket.on("setState", (state: State) => {
       setState(state);
     });
     socket.on("init", (player: Player) => {
@@ -45,8 +47,9 @@ function App() {
           </div>
           <div className="join_game">
             <form onSubmit={handleSubmit(joinGame)}>
-              <input type="text" name="roomName" ref={register} placeholder="Room Name" />
-              <button>Join Game</button>
+              <input type="text" name="playerName" ref={register} placeholder="Player Name" />
+              <input type="text" name="gameCode" ref={register} placeholder="Room Name" />
+              <input type="submit"   value="Join Game"/>
             </form>
           </div>
         </div>
@@ -78,7 +81,7 @@ function App() {
 
     return (
       <div>
-        <h1>Waiting for players</h1>
+        <h1>Waiting for players - room - {gameCode}</h1>
         {state.players.map( (player: Player, index: number) => {
           return(
             <div key={index}>
