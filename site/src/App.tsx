@@ -25,6 +25,12 @@ function App() {
     socket.emit("createGame", data);
   }
 
+  const startGame = () => {
+    let roomName = gameCode;
+    console.log(roomName);
+    socket.emit('startGame', roomName );
+  }
+
   useEffect(() => {
     socket.on("gameCode", (gameCode: string) => {
       setGameCode(gameCode);
@@ -63,13 +69,13 @@ function App() {
         <h1>Create Game Page!</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <input type="number" name="playercount" ref={register} placeholder="Number of players"/>
+            <input type="number" name="playerCount" ref={register} placeholder="Number of players"/>
           </div>
           <div>
-            <input type="number" name="roundtime" ref={register} placeholder="Round time"/>
+            <input type="number" name="roundTime" ref={register} placeholder="Round time"/>
           </div>
           <div>
-            <input type="text" name="playerhost" ref={register} placeholder="Player Name"/>
+            <input type="text" name="playerName" ref={register} placeholder="Player Name"/>
           </div>
           <input type="submit" value="Create Game"/>
         </form>
@@ -89,9 +95,24 @@ function App() {
             </div>
           )
         })}
+        { state.players.length === state.playerCount ? (
+            <button onClick={startGame}>StartGame</button>
+        ) :
+            <button disabled onClick={startGame}>StartGame</button>
+        }
       </div>
     );
 
+  }
+
+  else if (state.stage === 'play') {
+    return (
+      <div>
+        <h1>O JOGO COMEÇOU FODA-SE!</h1>  
+        <div>{state.roundTime.minutes}:{state.roundTime.seconds}</div>
+      </div>
+
+    );
   }
   else {
     return (

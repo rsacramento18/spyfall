@@ -2,7 +2,7 @@
 
  export interface State{
      stage: string;
-     roundTime: number;
+     roundTime: Time;
      playerHost: number;
      players: Player[];
      spy: number;
@@ -14,7 +14,7 @@
 
  export const initState : State = {
      stage: "init",
-     roundTime: 0,
+     roundTime: {minutes: 0, seconds: 0},
      playerHost: 0,
      players: [],
      spy: 0,
@@ -28,6 +28,12 @@
  export interface Player {
      id: number;
      playerName: string;
+     score: number;
  };
+
+ interface Time {
+     minutes: number;
+     seconds: number;
+ }
 
 
