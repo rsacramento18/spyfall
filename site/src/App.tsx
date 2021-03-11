@@ -2,6 +2,11 @@ import React, { useState, useEffect }  from 'react';
 import { useForm } from "react-hook-form";
 import { io } from "socket.io-client";
 import { ENDPOINT, State, initState, Player }  from "./objects/constants";
+import Init from "./components/init";
+import CreateGame from "./components/creategame";
+import WaitingRoom from "./components/waitingroom";
+import Game from "./components/game";
+
 
 function App() {
 
@@ -13,23 +18,10 @@ function App() {
 
   const socket = io(ENDPOINT);
 
-  const createGame = () => setState({...state, stage: "create"});
-
-  const joinGame = (data: any) => {
-    socket.emit("joinGame", data);
-  }
-
-  const onSubmit = (data: any) => {
-    socket.emit("createGame", data);
-  }
-
-  const startGame = () => {
-    let roomName = gameCode;
-    console.log(roomName);
-    socket.emit('startGame', roomName );
-  }
-
   useEffect(() => {
+    socket.on("changeToCreatePage", () => {
+      setState({...state, stage: "create"});
+    });
     socket.on("gameCode", (gameCode: string) => {
       setGameCode(gameCode);
     });
@@ -41,84 +33,34 @@ function App() {
     });
   });
 
-  if(state.stage === "init") {
-    return (
-      <div className="app">
-        <h1>Spyfall</h1>
-        <div className="wrapper">
-          <div className="create_game">
-            <button onClick={createGame}>Create New Game</button>
-          </div>
-          <div className="join_game">
-            <form onSubmit={handleSubmit(joinGame)}>
-              <input type="text" name="playerName" ref={register} placeholder="Player Name" />
-              <input type="text" name="gameCode" ref={register} placeholder="Room Name" />
-              <input type="submit"   value="Join Game"/>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  else if(state.stage === 'create') {
+  const screen = () => {
 
-    return (
-      <div>
-        <h1>Create Game Page!</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <input type="number" name="playerCount" ref={register} placeholder="Number of players"/>
+    if(state.stage === "init") {
+      return <Init socket={socket}/>
+    }
+    else if(state.stage === "create") {
+      return <CreateGame socket={socket}/>
+    }
+    else if(state.stage === 'waiting'){
+      return <WaitingRoom socket={socket} player={player} state={state} gameCode={gameCode}/>
+    }
+    else if (state.stage === 'play') {
+      return <Game socket={socket} player={player} state={state} />
+    }
+    else {
+      return (
+        <div>
+          No State selected
           </div>
-          <div>
-            <input type="number" name="roundTime" ref={register} placeholder="Round time"/>
-          </div>
-          <div>
-            <input type="text" name="playerName" ref={register} placeholder="Player Name"/>
-          </div>
-          <input type="submit" value="Create Game"/>
-        </form>
-      </div>
-    );
-
-  }
-  else if(state.stage === 'waiting'){
-
-    return (
-      <div>
-        <h1>Waiting for players - room - {gameCode}</h1>
-        {state.players.map( (player: Player, index: number) => {
-          return(
-            <div key={index}>
-              <h1>{player.playerName}-{player.id}</h1>
-            </div>
-          )
-        })}
-        { state.players.length === state.playerCount ? (
-            <button onClick={startGame}>StartGame</button>
-        ) :
-            <button disabled onClick={startGame}>StartGame</button>
-        }
-      </div>
-    );
-
+      );
+    }
   }
 
-  else if (state.stage === 'play') {
-    return (
-      <div>
-        <h1>O JOGO COMEÇOU FODA-SE!</h1>  
-        <div>{state.roundTime.minutes}:{state.roundTime.seconds}</div>
-      </div>
-
-    );
-  }
-  else {
-    return (
-      <div>
-        No State selected
-        </div>
-    );
-  }
+  return (
+    <div className="App bg-main-background h-screen">
+      {screen()}
+    </div>
+  );
 }
 
 export default App;

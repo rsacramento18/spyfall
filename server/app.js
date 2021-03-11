@@ -2,13 +2,13 @@ const express = require('express')();
 const http = require('http').createServer(express);
 const io = require('socket.io')(http, {
   cors: {
-      origin: "http://localhost:3000",
+      origin: "*",
       methods: ["GET", "POST"]
   }
 });
 const { createGameState, updateState, gameLoop } = require('./game');
 const { makeid } = require('./utils');
-const FRAME_RATE = 1;
+const FRAME_RATE = 100;
 
 const state = {};
 const clientRooms = {};
@@ -17,9 +17,14 @@ const PORT = 8080 || process.env.PORT;
 
 io.on('connection', client => {
 
+    client.on('toCreatePage', () => {
+        console.log('ran toCreatePage');
+        client.emit('changeToCreatePage');
+    });
     client.on('createGame', handleCreateGame);
     client.on('joinGame', handleJoinGame);
     client.on('startGame', startGameInterval);
+
 
     function handleCreateGame(gameData) {
         let roomName = makeid(5);
@@ -35,7 +40,7 @@ io.on('connection', client => {
         state[roomName] = createGameState(gameData, player);
 
         client.join(roomName);
-        client.emit('init', client.id);
+        client.emit('init', player);
         emitGameState(roomName, state[roomName]);
 
     }
@@ -79,7 +84,6 @@ io.on('connection', client => {
     }
 
     function startGameInterval(roomName){
-        console.log("ROOOM NAME IS" + roomName);
 
         state[roomName].stage = "play";
 
