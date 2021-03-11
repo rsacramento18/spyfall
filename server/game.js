@@ -14,7 +14,6 @@ const createGameState = (gameData, player) => {
 }
 
 const updateState = (state) => {
-    console.log(state);
     state.roundTime = updateCountDown(state.roundTime);
     return state;
 
@@ -31,7 +30,13 @@ const updateCountDown = (time) => {
         }
         return  {
             minutes: time.minutes -1,
-            seconds: 60,
+            seconds: 59,
+        }
+    }
+    else if(seconds < 10) {
+        return {
+            minutes: time.minutes,
+            seconds: "0"+seconds,
         }
     }
     else {
