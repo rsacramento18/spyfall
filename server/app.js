@@ -18,7 +18,6 @@ const PORT = 8080 || process.env.PORT;
 io.on('connection', client => {
 
     client.on('toCreatePage', () => {
-        console.log('ran toCreatePage');
         client.emit('changeToCreatePage');
     });
     client.on('createGame', handleCreateGame);
@@ -104,7 +103,7 @@ io.on('connection', client => {
                 clearInterval(intervalId);
             }
 
-        }, 1000 / FRAME_RATE)
+        }, 1000)
     }
 
     
@@ -114,7 +113,6 @@ io.on('connection', client => {
 function emitGameState(roomName, state) {
     io.sockets.in(roomName)
         .emit('setState', state);
-    console.log(state);
 }
 
 http.listen(PORT, () => {
