@@ -4,12 +4,17 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Lato', 'ui-sans-serif'],
+        'sans': ['Oswald', 'ui-sans-serif'],
       },
       backgroundImage: theme => ({
-        'main-background': "url('/src/resources/mainBackground.jpg')",
-        'pattern': "url('/src/resources/what-the-hex.png')",
-      })
+        'spyfall': "url('/src/resources/spyfall.png')",
+      }),
+      backgroundColor: theme => ({
+        'background': '#14161A',
+        'primary': '#21252A',
+        'secondary': '#525962',
+        'button': '#BE3333',
+      }),
     },
   },
   variants: {

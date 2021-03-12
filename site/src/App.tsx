@@ -57,7 +57,7 @@ function App() {
   }
 
   return (
-    <div className="App bg-main-background h-screen">
+    <div className="App bg-background bg-spyfall bg-center bg-no-repeat h-screen">
       {screen()}
     </div>
   );
