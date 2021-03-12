@@ -15,6 +15,9 @@ module.exports = {
         'secondary': '#525962',
         'button': '#BE3333',
       }),
+      borderColor: theme => ({
+        'red': '#BE3333',
+      }),
     },
   },
   variants: {

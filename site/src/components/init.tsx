@@ -11,7 +11,7 @@ const Init = (props: any) => {
   return (
     <div className="flex flex-col h-screen py-4">
         <div className="text-white text-center mt-16 text-4xl uppercase">
-          <h1 className="">Spyfall</h1>
+          <h1>Spyfall</h1>
         </div>
         <div className="bg-primary my-14 mx-auto w-2/3 p-6 rounded bg-opacity-80">
           <button className="w-full text-center font-medium bg-button text-white p-4 rounded" onClick={createGame}>Create New Game</button>

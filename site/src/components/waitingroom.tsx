@@ -9,37 +9,30 @@ const WaitingRoom = (props: any) => {
   const showButton = () => {
     if(props.player.id === props.state.playerHost.id) {
       if(props.state.players.length === props.state.playerCount) {
-        return <button className="font-bold text-white w-44 p-4 bg-blue-500 rounded-sm" onClick={startGame}>Start Game</button>
-      }
-      else {
-        return <button className="font-bold text-white w-44 p-4 bg-gray-500 rounded-sm" disabled>Start Game</button>
+        return <button className="w-full text-center font-medium bg-button text-white p-2 rounded my-2" onClick={startGame}>Start Game</button>
       }
     }
   }
 
   return (
-    <div className="bg-none flex h-screen">
-      <div className="bg-none text-white w-5/6 my-6 mx-auto rounded-sm py-8 flex flex-col justify-between justify-between align-center">
-        <div>
-          <div className="text-center">
-            <h1 className="text-3xl">Waiting for players</h1>
+    <div className="flex flex-col h-screen py-4">
+      <div className="text-white text-center mt-16 text-4xl uppercase">
+        <h1>Waiting for players</h1>
+      </div>
+      <div className="bg-primary rounded text-white mx-auto my-8 p-2 w-2/3 text-center">
+        <h1 className="text-2xl">{props.gameCode}</h1>
+      </div>
+      <div className="flex flex-col bg-primary mx-auto w-2/3 p-6 rounded bg-opacity-80">
+        {props.state.players.map( (player: Player, index: number) => {
+        return(
+          <div className="w-full mx-auto my-2 text-center bg-background border text-gray-400 rounded" key={index}>
+            <h1 className="text-lg uppercase font-bold py-2">{player.playerName}</h1>
           </div>
-          <div className="flex justify-center text-center my-4">
-            <h1 className="text-2xl">{props.gameCode}</h1>
-          </div>
-          <div className="flex flex-col">
-            {props.state.players.map( (player: Player, index: number) => {
-            return(
-              <div className="w-2/3 mx-auto my-2 text-center bg-white  bg-pattern" key={index}>
-                <h1 className="text-lg uppercase text-black font-bold py-2">{player.playerName}</h1>
-              </div>
-            )
-            })}
-          </div>
-        </div>
-        <div className="mx-auto">
-          { showButton()}
-        </div>
+        )
+        })}
+      </div>
+      <div className="m-auto bg-primary bg-opacity-80 w-2/3 p-6 rounded bg-opacity-80">
+        { showButton()}
       </div>
     </div>
   );
