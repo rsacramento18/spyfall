@@ -1,7 +1,7 @@
 import React, { useState, useEffect }  from 'react';
 import { useForm } from "react-hook-form";
 import { io } from "socket.io-client";
-import { ENDPOINT, State, initState, Player }  from "./objects/constants";
+import { ENDPOINT, State, initState, Player, initStateRigged, playerRigged }  from "./objects/constants";
 import Init from "./components/init";
 import CreateGame from "./components/creategame";
 import WaitingRoom from "./components/waitingroom";
@@ -10,11 +10,9 @@ import Game from "./components/game";
 
 function App() {
 
-  const {register, handleSubmit} = useForm(); 
-
-  const [state, setState] = useState<State>(initState);
-  const [gameCode, setGameCode] = useState<string>();
-  const [player, setPlayer] = useState<Player>();
+  const [state, setState] = useState<State>(initStateRigged);
+  const [gameCode, setGameCode] = useState<string>("kjfk");
+  const [player, setPlayer] = useState<Player>(playerRigged);
 
   const socket = io(ENDPOINT);
 

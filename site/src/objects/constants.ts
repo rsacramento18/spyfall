@@ -3,30 +3,75 @@
  export interface State{
      stage: string;
      roundTime: Time;
-     playerHost: number;
+     playerHost: string;
      players: Player[];
-     spy: number;
+     spy: string;
      playerCount: number;
-     playerTurn: number;
-     lasPlayer: number;
+     playerTurn: string;
+     lastPlayer: string;
      removedPlayers: number[];
+     environments: string[];
+     environment: string;
  }
 
  export const initState : State = {
      stage: "init",
      roundTime: {minutes: 0, seconds: 0},
-     playerHost: 0,
+     playerHost: "",
      players: [],
-     spy: 0,
+     spy: "",
      playerCount: 0,
-     playerTurn: 0,
-     lasPlayer: 0,
-     removedPlayers: []
+     playerTurn: "",
+     lastPlayer: "",
+     removedPlayers: [],
+     environments: [],
+     environment: "",
+ }
+
+ export const playerRigged : Player = {
+    id: "dkjfkajdf",
+    playerName: "Ricardo",
+    score: 0,
+ }
+
+ export const initStateRigged : State = {
+     stage: "play",
+     roundTime: { minutes: 10, seconds: 59 },
+     playerHost: "dkjfkajdf",
+     players: [
+         {
+            id: "dkjfkajdf",
+            playerName: "Ricardo",
+            score: 0,
+         },
+         {
+            id: "jkfjakfjads",
+            playerName: "Carolina",
+            score: 0,
+         },
+         {
+            id: "iwqeukfjdal",
+            playerName: "Henrique",
+            score: 0,
+         },
+         {
+            id: "dkfjlhlkdsahal",
+            playerName: "Diogo",
+            score: 0,
+         }
+     ],
+     spy: "dkfjlhlkdsahal",
+     playerCount: 4,
+     playerTurn: "dkjfkajdf",
+     lastPlayer: "",
+     removedPlayers: [],
+     environments: ["Airplane", "Beach", "Circus Tent", "Day Spa", "Hospital", "Military Base", "Pirate Ship", "Police Station", "School", "Space Station", "Supermarket", "University", "Bank", "Cathedral", "Corporate Party", "Casino", "Hotel", "Movie Studio", "Passenger Train", "Polar Station", "Restaurant", "Service Station", "Submarine", "Theater", "World War II Squad"],
+     environment: "Airplane",
  }
  
 
  export interface Player {
-     id: number;
+     id: string;
      playerName: string;
      score: number;
  };

@@ -9,7 +9,12 @@ const WaitingRoom = (props: any) => {
   const showButton = () => {
     if(props.player.id === props.state.playerHost.id) {
       if(props.state.players.length === props.state.playerCount) {
-        return <button className="w-full text-center font-medium bg-button text-white p-2 rounded my-2" onClick={startGame}>Start Game</button>
+      return (
+        <div className="m-auto bg-primary bg-opacity-80 w-2/3 p-6 rounded bg-opacity-80">
+          <button className="w-full text-center font-medium bg-button text-white p-2 rounded my-2" onClick={startGame}>Start Game</button>
+        </div>
+      )
+        
       }
     }
   }
@@ -31,9 +36,7 @@ const WaitingRoom = (props: any) => {
         )
         })}
       </div>
-      <div className="m-auto bg-primary bg-opacity-80 w-2/3 p-6 rounded bg-opacity-80">
         { showButton()}
-      </div>
     </div>
   );
 
