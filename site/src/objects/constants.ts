@@ -12,6 +12,7 @@
      removedPlayers: number[];
      environments: string[];
      environment: string;
+     voting: Vote;
  }
 
  export const initState : State = {
@@ -26,6 +27,13 @@
      removedPlayers: [],
      environments: [],
      environment: "",
+     voting: {from : "", to: "", playersVoted: 0, yes:0, no:0 },
+ }
+
+ export const blankPlayer : Player = {
+    id: "",
+    playerName: "",
+    score: 0,
  }
 
  export const playerRigged : Player = {
@@ -67,6 +75,13 @@
      removedPlayers: [],
      environments: ["Airplane", "Beach", "Circus Tent", "Day Spa", "Hospital", "Military Base", "Pirate Ship", "Police Station", "School", "Space Station", "Supermarket", "University", "Bank", "Cathedral", "Corporate Party", "Casino", "Hotel", "Movie Studio", "Passenger Train", "Polar Station", "Restaurant", "Service Station", "Submarine", "Theater", "World War II Squad"],
      environment: "Airplane",
+     voting: {
+         from : "fdkaj",
+         to: "fdkajfk",
+         playersVoted: 2,
+         yes: 2,
+         no: 0,
+    },
  }
  
 
@@ -75,6 +90,14 @@
      playerName: string;
      score: number;
  };
+
+ export interface Vote {
+     from: string,
+     to: string,
+     playersVoted: number,
+     yes: number,
+     no: number,
+ }
 
  interface Time {
      minutes: number;

@@ -6,7 +6,7 @@ const io = require('socket.io')(http, {
       methods: ["GET", "POST"]
   }
 });
-const { createGameState, updateState, gameLoop } = require('./game');
+const { createGameState, updateState, gameLoop, moveTurn, startVote, isVotingDone } = require('./game');
 const { makeid } = require('./utils');
 const FRAME_RATE = 100;
 
@@ -23,6 +23,11 @@ io.on('connection', client => {
     client.on('createGame', handleCreateGame);
     client.on('joinGame', handleJoinGame);
     client.on('startGame', startGameInterval);
+    client.on('question', handleQuestion);
+    client.on('startVote', handleStartVote);
+    client.on('vote', handleVote);
+    // client.on('spy', handleSpy);
+    // client.on('endGame', handleEndGame);
 
 
     function handleCreateGame(gameData) {
@@ -48,9 +53,9 @@ io.on('connection', client => {
         let gameCode = joinData.gameCode;
         let playerName = joinData.playerName;
 
-        let room = io.of('/').adapter.rooms.get(gameCode).size;
-
-        if(!room) {
+        if(typeof io.of('/').adapter.rooms.get(gameCode) === 'undefined'){
+            console.log('gameCode invalid!');
+            client.emit('gameCodeInvalid')
             return;
         }
 
@@ -106,7 +111,38 @@ io.on('connection', client => {
         }, 1000)
     }
 
-    
+    function handleQuestion(toPlayer, roomName) {
+        state[roomName] = moveTurn(state[roomName], toPlayer);
+
+        emitGameState(roomName, state[roomName]);
+        client.emit('questionDone');
+    }
+
+    function handleStartVote(fromPlayer, toPlayer, roomName) {
+        console.log("START VOTING");
+
+        state[roomName] = starVote(fromPlayer, toPlayer, state[roomName]);
+        io.sockets.in(roomName).emit('votingStarted', state[roomName]);
+
+        const intervalId = setInterval(() => {
+
+            const vote = isVotingDone(state[roomName]);
+
+            if(!winner) {
+                emitGameState(roomName, state[roomName]);
+            }
+            else {
+                io.sockets.in(roomName).emit('votingDone', state);
+            }
+
+        }, 1000);
+    }
+
+    function handleVote(vote, roomName) {
+        state[roomName] = vote(vote, state);
+        
+        emitGameState(roomName, state[roomName]);
+    }
 });
 
 

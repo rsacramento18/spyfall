@@ -10,9 +10,13 @@ import Game from "./components/game";
 
 function App() {
 
-  const [state, setState] = useState<State>(initStateRigged);
-  const [gameCode, setGameCode] = useState<string>("kjfk");
-  const [player, setPlayer] = useState<Player>(playerRigged);
+  // const [state, setState] = useState<State>(initStateRigged);
+  // const [gameCode, setGameCode] = useState<string>("kjfk");
+  // const [player, setPlayer] = useState<Player>(playerRigged);
+
+  const [state, setState] = useState<State>(initState);
+  const [gameCode, setGameCode] = useState<string>();
+  const [player, setPlayer] = useState<Player>();
 
   const socket = io(ENDPOINT);
 

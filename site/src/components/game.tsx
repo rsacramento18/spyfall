@@ -2,7 +2,7 @@ import React, { useState }  from 'react';
 import { useForm } from "react-hook-form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faPoll, faMonument, faUserSecret, faTimes, faCheckCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { Player } from "../objects/constants";
+import { Player, blankPlayer } from "../objects/constants";
 import PlayerBox from "../components/playerbox";
 
 const Game = (props: any) => {
@@ -15,6 +15,7 @@ const Game = (props: any) => {
   const noIcon = <FontAwesomeIcon icon={faTimesCircle} size="5x" color="#9CA3AF"/>
 
   const [screen, setScreen] = useState("main");
+  const [votedPlayer, setVotedPlayer] = useState<Player>(blankPlayer);
   const {register, handleSubmit} = useForm();
 
   const revealSpy = () => console.log("SpyRevealed");
@@ -23,6 +24,7 @@ const Game = (props: any) => {
   const setMain = () => setScreen("main");
   const setVote = () => setScreen("vote");
   const setVoting = () => setScreen("voting");
+  const setVotingResult = () => setScreen("votingResult");
   const setReveal = () => setScreen("reveal");
   const setScore = () => setScreen("score");
 
@@ -37,6 +39,14 @@ const Game = (props: any) => {
     }
     
   }
+
+  const startVoting = (playerTo: Player) => {
+    console.log("startVoting");
+    props.socket.emit("startVote", props.player, playerTo.id, props.gameRoom);
+    setVotedPlayer(playerTo);
+    setVotingResult();
+  }
+
 
   const showScreen = () => {
 
@@ -55,7 +65,9 @@ const Game = (props: any) => {
               {props.state.players.map(( player: Player, index: number) => {
                 if(props.player.id !== player.id){
                   return (
-                    <PlayerBox player={player} key={index} />
+                    <div onClick={() => startVoting(player)} className="w-full mx-auto my-2 text-center bg-background border text-gray-400 rounded" key={index}>
+                      <h1 className="text-lg uppercase font-bold py-2">{player.playerName}</h1>
+                    </div>
                   )
                 }
               })}
@@ -77,7 +89,9 @@ const Game = (props: any) => {
               <h1 className="text-4xl">Vote</h1>
             </div>
             <div className="p-4 mt-12">
-              <PlayerBox player={props.player} key={0} />
+              <div  className="w-full mx-auto my-2 text-center bg-background border text-gray-400 rounded">
+                <h1 className="text-lg uppercase font-bold py-2">{votedPlayer.playerName}</h1>
+              </div>
             </div>
             <div className="flex justify-between p-8">
               <div className="flex flex-col">
@@ -87,6 +101,38 @@ const Game = (props: any) => {
               <div className="flex flex-col">
                 {noIcon}
                 <span className="mx-auto text-gray-400 text-4xl uppercase my-4">no</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      );
+
+    }
+    else if(screen === "votingResult") {
+      return (
+
+        <div className="fixed bg-background w-full h-full bg-opacity-90 top-0 flex flex-col p-6">
+          <div className="text-right w-full" onClick={setMain}>
+            {closeIcon}
+          </div>
+          <div className="bg-primary rounded w-11/12 p-2 my-8 mx-auto">
+            <div className="text-white text-center">
+              <h1 className="text-4xl">Vote</h1>
+            </div>
+            <div className="p-4 mt-12">
+              <div  className="w-full mx-auto my-2 text-center bg-background border text-gray-400 rounded">
+                <h1 className="text-lg uppercase font-bold py-2">{votedPlayer.playerName}</h1>
+              </div>
+            </div>
+            <div className="flex justify-between p-8">
+              <div className="flex flex-col">
+                {yesIcon}
+                <span className="mx-auto text-gray-400 text-4xl uppercase my-4">{props.state.voting.yes}</span>
+              </div>
+              <div className="flex flex-col">
+                {noIcon}
+                <span className="mx-auto text-gray-400 text-4xl uppercase my-4">{props.state.voting.no}</span>
               </div>
             </div>
           </div>
