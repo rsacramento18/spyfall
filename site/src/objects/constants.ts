@@ -1,4 +1,5 @@
- export const ENDPOINT : string = "http://localhost:8080";
+ export const ENDPOINT : string = "http://192.168.1.121:8080";
+ export const ENDPOINT_LOCAL : string = "http://localhost:8080";
 
  export interface State{
      stage: string;

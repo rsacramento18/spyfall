@@ -19,6 +19,7 @@ io.on('connection', client => {
 
     client.on('toCreatePage', () => {
         client.emit('changeToCreatePage');
+        console.log("Clicked Create game");
     });
     client.on('createGame', handleCreateGame);
     client.on('joinGame', handleJoinGame);
@@ -50,11 +51,10 @@ io.on('connection', client => {
     }
 
     function handleJoinGame(joinData) {
-        let gameCode = joinData.gameCode;
+        let gameCode = joinData.gameCode.toLowerCase();
         let playerName = joinData.playerName;
 
         if(typeof io.of('/').adapter.rooms.get(gameCode) === 'undefined'){
-            console.log('gameCode invalid!');
             client.emit('gameCodeInvalid')
             return;
         }
