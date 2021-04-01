@@ -6,7 +6,7 @@ const io = require('socket.io')(http, {
       methods: ["GET", "POST"]
   }
 });
-const { createGameState, updateState, gameLoop, moveTurn, startVote, isVotingDone } = require('./game');
+const { createGameState, createGameStateRigged, updateState, gameLoop, moveTurn, startVote, isVotingDone } = require('./game');
 const { makeid } = require('./utils');
 const FRAME_RATE = 100;
 
@@ -29,6 +29,28 @@ io.on('connection', client => {
     client.on('vote', handleVote);
     // client.on('spy', handleSpy);
     // client.on('endGame', handleEndGame);
+    
+    client.on('rig', handleRig);
+
+    function handleRig() {
+
+        let roomName = makeid(5);
+        clientRooms[client.id] = roomName;
+        client.emit('gameCode', roomName);
+
+        let player={
+            id: "1",
+            playerName: "Ricardo",
+            score: 0,
+        }
+
+        state[roomName] = createGameStateRigged(player);
+
+        client.join(roomName);
+        client.emit('init', player);
+        emitGameState(roomName, state[roomName]);
+
+    }
 
 
     function handleCreateGame(gameData) {
@@ -119,9 +141,9 @@ io.on('connection', client => {
     }
 
     function handleStartVote(fromPlayer, toPlayer, roomName) {
-        console.log("START VOTING");
+        roomName = roomName.toLowerCase();
 
-        state[roomName] = starVote(fromPlayer, toPlayer, state[roomName]);
+        state[roomName] = startVote(fromPlayer, toPlayer, state[roomName]);
         io.sockets.in(roomName).emit('votingStarted', state[roomName]);
 
         const intervalId = setInterval(() => {

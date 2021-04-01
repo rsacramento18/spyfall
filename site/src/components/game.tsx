@@ -42,7 +42,7 @@ const Game = (props: any) => {
 
   const startVoting = (playerTo: Player) => {
     console.log("startVoting");
-    props.socket.emit("startVote", props.player, playerTo.id, props.gameRoom);
+    props.socket.emit("startVote", props.player, playerTo.id, props.gameCode);
     setVotedPlayer(playerTo);
     setVotingResult();
   }

@@ -14,6 +14,23 @@ const createGameState = (gameData, player) => {
     }
 }
 
+const createGameStateRigged = (player) => {
+
+    return {
+        stage: "waiting",
+        roundTime: {minutes: 10, seconds:0},
+        roundNumber: 1,
+        playerHost: player,
+        players: [player, {id:"2", playerName:"Carolina", score:0},{id:"3", playerName:"Henrique", score:0},{id:"4", playerName:"Diogo", score:0}],
+        playerCount: parseInt(4),
+        spy: '',
+        playerTurn: '',
+        lastPlayer: '',
+        removedPlayers: [],
+        voting: []
+    }
+}
+
 const updateState = (state) => {
     state.roundTime = updateCountDown(state.roundTime);
     return state;
@@ -93,9 +110,11 @@ const vote = (vote, state) => {
 
 module.exports = {
     createGameState,
+    createGameStateRigged,
     updateState,
     gameLoop,
     moveTurn,
+    startVote,
     isVotingDone,
     vote,
 }

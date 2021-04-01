@@ -1,7 +1,7 @@
 import React, { useState, useEffect }  from 'react';
 import { useForm } from "react-hook-form";
 import { io } from "socket.io-client";
-import { ENDPOINT, State, initState, Player, initStateRigged, playerRigged }  from "./objects/constants";
+import { ENDPOINT, ENDPOINT_LOCAL, State, initState, Player, initStateRigged, playerRigged }  from "./objects/constants";
 import Init from "./components/init";
 import CreateGame from "./components/creategame";
 import WaitingRoom from "./components/waitingroom";
@@ -18,7 +18,7 @@ function App() {
   const [gameCode, setGameCode] = useState<string>();
   const [player, setPlayer] = useState<Player>();
 
-  const socket = io(ENDPOINT);
+  const socket = io(ENDPOINT_LOCAL);
 
   useEffect(() => {
     socket.on("changeToCreatePage", () => {
@@ -47,7 +47,7 @@ function App() {
       return <WaitingRoom socket={socket} player={player} state={state} gameCode={gameCode}/>
     }
     else if (state.stage === 'play') {
-      return <Game socket={socket} player={player} state={state} />
+      return <Game socket={socket} player={player} state={state} gameCode={gameCode} />
     }
     else {
       return (
