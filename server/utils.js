@@ -1,5 +1,5 @@
 module.exports = {
-   makeid,
+   makeid, randomNumber,
 }
 
 function makeid(length) {
@@ -11,4 +11,8 @@ function makeid(length) {
               result += characters.charAt(Math.floor(Math.random() * charactersLength));
            }
     return result;
+}
+
+function randomNumber(range) {
+ return Math.floor(Math.random() * range);
 }

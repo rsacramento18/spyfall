@@ -1,12 +1,16 @@
+import {useContext} from 'react';
+import {SocketContext} from "../objects/socket";
 import { useForm } from "react-hook-form";
 
 const Init = (props: any) => {
 
+  const socket  = useContext(SocketContext);
+
   const {register, handleSubmit} = useForm(); 
 
-  const createGame = () => props.socket.emit("toCreatePage");
+  const createGame = () => socket.emit("toCreatePage");
 
-  const joinGame = (data: any) => props.socket.emit("joinGame", data);
+  const joinGame = (data: any) => socket.emit("joinGame", data);
 
   return (
     <div className="flex flex-col h-screen py-4">

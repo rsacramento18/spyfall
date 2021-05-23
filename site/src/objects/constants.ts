@@ -3,6 +3,7 @@
 
  export interface State{
      stage: string;
+     gamePhase: string;
      roundTime: Time;
      playerHost: string;
      players: Player[];
@@ -14,10 +15,12 @@
      environments: string[];
      environment: string;
      voting: Vote;
+     votingHistory: Vote[];
  }
 
  export const initState : State = {
      stage: "init",
+     gamePhase: "main",
      roundTime: {minutes: 0, seconds: 0},
      playerHost: "",
      players: [],
@@ -29,6 +32,7 @@
      environments: [],
      environment: "",
      voting: {from : "", to: "", playersVoted: 0, yes:0, no:0 },
+     votingHistory: [],
  }
 
  export const blankPlayer : Player = {
@@ -45,6 +49,7 @@
 
  export const initStateRigged : State = {
      stage: "play",
+     gamePhase: "main",
      roundTime: { minutes: 10, seconds: 59 },
      playerHost: "dkjfkajdf",
      players: [
@@ -83,6 +88,7 @@
          yes: 2,
          no: 0,
     },
+    votingHistory: [],
  }
  
 

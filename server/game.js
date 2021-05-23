@@ -1,3 +1,6 @@
+const { ENVIRONMENTS } = require('./constants');
+const { randomNumber } = require('./utils');
+
 const createGameState = (gameData, player) => {
     return {
         stage: "waiting",
@@ -10,7 +13,7 @@ const createGameState = (gameData, player) => {
         playerTurn: '',
         lastPlayer: '',
         removedPlayers: [],
-        voting: []
+        voting: {}
     }
 }
 
@@ -27,8 +30,25 @@ const createGameStateRigged = (player) => {
         playerTurn: '',
         lastPlayer: '',
         removedPlayers: [],
-        voting: []
+        voting: {}
     }
+}
+
+const initGame = (state) => {
+    state.environments = ENVIRONMENTS;
+
+    let spy = randomNumber(state.playerCount);
+    let environment = randomNumber(state.environments.length - 1 );
+    let playerTurn = randomNumber(state.playerCount);
+
+    state.stage = "play";
+    state.spy = state.players[spy];
+    state.playerTurn = state.players[playerTurn];
+    state.environment = state.environments[environment];
+
+    console.log(state);
+
+    return state;
 }
 
 const updateState = (state) => {
@@ -87,23 +107,26 @@ const startVote = (fromPlayer, toPlayer, state) => {
         no: 0,
     }
 
-    return state.voting.push(voting);
+
+    state.voting = voting;
+
+    return state;
 }
 
 const isVotingDone = (state) => {
-    if(state.voting[state.voting.length - 1] === state.playerCount - 1) return true;
+    if(state.voting.playersVoted === state.playerCount) return true;
     else return false;
 }
 
-const vote = (vote, state) => {
-    let voting = state.voting[state.voting.length - 1];
+const voteAction = (vote, state) => {
+    console.log(state);
+    console.log(vote);
+    console.log(state.voting);
 
-    if(vote === 'yes') voting.yes += 1;
-    else voting.no += 1;
+    if(vote === true) state.voting.yes += 1;
+    else state.voting.no += 1;
 
-    voting.playersVoted += 1 ;
-
-    state.voting[state.voting.length - 1] = voting;
+    state.voting.playersVoted += 1 ;
 
     return state;
 }
@@ -111,10 +134,11 @@ const vote = (vote, state) => {
 module.exports = {
     createGameState,
     createGameStateRigged,
+    initGame,
     updateState,
     gameLoop,
     moveTurn,
     startVote,
     isVotingDone,
-    vote,
+    voteAction,
 }

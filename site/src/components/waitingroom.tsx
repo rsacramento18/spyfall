@@ -1,9 +1,13 @@
+import {useContext} from 'react';
+import {SocketContext} from "../objects/socket";
 import { Player } from "../objects/constants";
 
 const WaitingRoom = (props: any) => {
+
+  const socket = useContext(SocketContext);
   
   const startGame = () => {
-    props.socket.emit('startGame', props.gameCode);
+    socket.emit('startGame', props.gameCode);
   }
 
   const showButton = () => {

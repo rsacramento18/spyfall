@@ -6,7 +6,7 @@ const io = require('socket.io')(http, {
       methods: ["GET", "POST"]
   }
 });
-const { createGameState, createGameStateRigged, updateState, gameLoop, moveTurn, startVote, isVotingDone } = require('./game');
+const { createGameState, createGameStateRigged, initGame, updateState, gameLoop, moveTurn, startVote, isVotingDone, voteAction } = require('./game');
 const { makeid } = require('./utils');
 const FRAME_RATE = 100;
 
@@ -24,7 +24,8 @@ io.on('connection', client => {
     client.on('createGame', handleCreateGame);
     client.on('joinGame', handleJoinGame);
     client.on('startGame', startGameInterval);
-    client.on('question', handleQuestion);
+    client.on('askQuestion', handleAskQuestion);
+    client.on('askQuestionDone', handleAskQuestionDone);
     client.on('startVote', handleStartVote);
     client.on('vote', handleVote);
     // client.on('spy', handleSpy);
@@ -54,7 +55,8 @@ io.on('connection', client => {
 
 
     function handleCreateGame(gameData) {
-        let roomName = makeid(5);
+        // let roomName = makeid(5);
+        let roomName = "aaaaa"
         clientRooms[client.id] = roomName;
         client.emit('gameCode', roomName);
 
@@ -73,7 +75,8 @@ io.on('connection', client => {
     }
 
     function handleJoinGame(joinData) {
-        let gameCode = joinData.gameCode.toLowerCase();
+        // let gameCode = joinData.gameCode.toLowerCase();
+        let gameCode = "aaaaa";
         let playerName = joinData.playerName;
 
         if(typeof io.of('/').adapter.rooms.get(gameCode) === 'undefined'){
@@ -92,9 +95,10 @@ io.on('connection', client => {
             return;
         }
 
-        client.rooms[client.id] = gameCode;
+        // client.rooms[client.id] = gameCode;
         client.join(gameCode);
         client.emit('gameCode', gameCode);
+        client.rooms[client.id] = "aaaaa";
 
         let player = {
             id: client.id,
@@ -102,7 +106,7 @@ io.on('connection', client => {
             score: 0,
         }
 
-        client.emit('init', client.id);
+        client.emit('init', player);
 
         state[gameCode].players.push(player);
 
@@ -112,6 +116,8 @@ io.on('connection', client => {
     function startGameInterval(roomName){
 
         state[roomName].stage = "play";
+
+        state[roomName] = initGame(state[roomName]);
 
         const intervalId = setInterval(() => {
             state[roomName] = updateState(state[roomName]);
@@ -133,40 +139,47 @@ io.on('connection', client => {
         }, 1000)
     }
 
-    function handleQuestion(toPlayer, roomName) {
+    function handleAskQuestion(playerTo, roomName) {
+        io.sockets.in(roomName).emit('askQuestionStarted', playerTo);
+    }
+
+    function handleAskQuestionDone(toPlayer, roomName) {
         state[roomName] = moveTurn(state[roomName], toPlayer);
 
         emitGameState(roomName, state[roomName]);
-        client.emit('questionDone');
+        io.sockets.in(roomName).emit('askQuestionDone');
     }
 
     function handleStartVote(fromPlayer, toPlayer, roomName) {
         roomName = roomName.toLowerCase();
 
         state[roomName] = startVote(fromPlayer, toPlayer, state[roomName]);
-        io.sockets.in(roomName).emit('votingStarted', state[roomName]);
+        io.sockets.in(roomName).emit('votingStarted', fromPlayer, toPlayer);
+        emitGameState(roomName, state[roomName]);
 
         const intervalId = setInterval(() => {
 
-            const vote = isVotingDone(state[roomName]);
+            const votingDone = isVotingDone(state[roomName]);
+            console.log(votingDone);
 
-            if(!winner) {
+            if(!votingDone) {
                 emitGameState(roomName, state[roomName]);
             }
             else {
                 io.sockets.in(roomName).emit('votingDone', state);
+                clearInterval(intervalId);
             }
-
         }, 1000);
     }
 
     function handleVote(vote, roomName) {
-        state[roomName] = vote(vote, state);
+        state[roomName] = voteAction(vote, state[roomName]);
         
         emitGameState(roomName, state[roomName]);
+        
+        client.emit("voteComplete");
     }
 });
-
 
 function emitGameState(roomName, state) {
     io.sockets.in(roomName)
